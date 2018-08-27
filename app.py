@@ -1,11 +1,8 @@
 from flask import Flask
+from app.web.blueprint import web
 
 app = Flask(__name__)
-
-
-@app.route('/')
-def hello_world():
-    return 'Hello World!'
+app.register_blueprint(web)
 
 
 if __name__ == '__main__':
