@@ -15,6 +15,8 @@ def search():
         isbn_or_key = is_isbn_or_key(form.q.data)
         if isbn_or_key == 'key':
             yushubook.search_by_keyword(form.q.data, form.page.data)
+        else:
+            yushubook.search_by_isbn(form.q.data)
         books = BookPage(yushubook)
     return render_template('search_result.html', books=books, form=form)
 

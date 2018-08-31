@@ -21,9 +21,20 @@ class YushuBook:
         self.total = data['total']
         self.books = data['books']
 
+    def __fill_single(self, book):
+        self.total = 1
+        self.books.append(book)
+
     def search_by_keyword(self, keyword, page=1):
         url = self.keyword_url.format(keyword, get_start(page), current_app.config['PER_PAGE'])
         result = HttpClient.get(url)
         self.keyword = keyword
         self.__fill_page(result)
+
+    def search_by_isbn(self, isbn):
+        url = self.isbn_url.format(isbn)
+        result = HttpClient.get(url)
+        self.keyword = isbn
+        self.__fill_single(result)
+
 
