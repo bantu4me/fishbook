@@ -31,10 +31,13 @@ class BookView:
 
 
 class BookPage:
-    def __init__(self, yushubook: YushuBook):
+    def __init__(self):
+        self.total = 0
+        self.books = []
+        self.keyword = ''
+
+    def fill_book_page(self, yushubook: YushuBook):
         self.total = yushubook.total
         self.books = [BookView(book) for book in yushubook.books]
         self.keyword = yushubook.keyword
-
-
 

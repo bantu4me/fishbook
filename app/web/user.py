@@ -14,7 +14,10 @@ def login():
         user = User.query.filter_by(email=form.email.data).first()
         if user and user.check_pwd(form.password.data):
             login_user(user)
-            return redirect(url_for('web.index'))
+            next = request.args['next']
+            if not next or next.startswith('/'):
+                next = url_for('web.index')
+            return redirect(next)
         else:
             flash(message='用户名或密码错误')
     return render_template('auth/login.html', form=[])

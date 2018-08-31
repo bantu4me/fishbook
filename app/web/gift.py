@@ -4,6 +4,7 @@ from app.web.blueprint import web
 
 
 @web.route('/my/gifts')
+@login_required
 def my_gifts():
     pass
 
