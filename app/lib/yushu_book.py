@@ -37,4 +37,6 @@ class YushuBook:
         self.keyword = isbn
         self.__fill_single(result)
 
-
+    @property
+    def only(self):
+        return self.books[0]

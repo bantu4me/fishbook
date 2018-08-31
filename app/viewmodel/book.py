@@ -37,5 +37,4 @@ class BookPage:
         self.keyword = yushubook.keyword
 
 
-if __name__ == '__main__':
-    pass
+

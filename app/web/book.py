@@ -1,7 +1,7 @@
 from flask import render_template, request
 
 from app.form.book import SearchForm
-from app.viewmodel.book import BookPage
+from app.viewmodel.book import BookPage, BookView
 from .blueprint import web
 from app.lib.utils import is_isbn_or_key
 from app.lib.yushu_book import YushuBook
@@ -23,4 +23,7 @@ def search():
 
 @web.route('/book/<isbn>/detail')
 def book_detail(isbn):
-    pass
+    yushubook = YushuBook()
+    yushubook.search_by_isbn(isbn)
+    book = BookView(yushubook.only)
+    return render_template('book_detail.html', book=book, gifts=[], wishes=[])
