@@ -4,6 +4,9 @@ from app.model.base import Base
 
 
 class Book(Base):
+
+    __tablename__ = 'book'
+
     id = Column(Integer, primary_key=True)
     author = Column(String(length=50), nullable=False)
     binding = Column(String(length=30), default='佚名')

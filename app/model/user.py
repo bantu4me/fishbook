@@ -2,8 +2,12 @@ from flask_login import UserMixin
 from sqlalchemy import Column, String, Integer, Boolean, Float
 
 from app import login
+from app.lib.utils import is_isbn_or_key
+from app.lib.yushu_book import YushuBook
 from app.model.base import Base
 from werkzeug.security import generate_password_hash, check_password_hash
+
+
 
 
 class User(Base, UserMixin):
@@ -32,8 +36,31 @@ class User(Base, UserMixin):
     def check_pwd(self, raw):
         return check_password_hash(self._password, raw)
 
+    def can_save_gift_or_wish(self, isbn)-> bool:
+        '''
+        通过传入isbn判断当前isbn对应书籍能否保存到心愿或礼物
+        :param isbn:
+        :return:
+        '''
+        isbn_or_key = is_isbn_or_key(isbn)
+        if isbn_or_key == 'key':
+            return False
+        # isbn查询不到对应书籍，返回false
+        yushubook = YushuBook()
+        yushubook.search_by_isbn(isbn)
+        if not yushubook.only:
+            return False
+        # 判断该isbn号是否已经存在用户的心愿或礼物列表中
+        gift = Gift.query.filter_by(uid=self.id, isbn=isbn, launched=False).first()
+        wish = Wish.query.filter_by(uid=self.id, isbn=isbn, launched=False).first()
+        return True if not gift and not wish else False
+
 
 @login.user_loader
 def get_user(uid):
     print('in get user')
     return User.query.get(int(uid))
+
+
+from app.model.gift import Gift
+from app.model.wish import Wish
