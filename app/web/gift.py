@@ -1,3 +1,5 @@
+from flask_login import login_required
+
 from app.web.blueprint import web
 
 
@@ -7,8 +9,9 @@ def my_gifts():
 
 
 @web.route('/gifts/book/<isbn>')
+@login_required
 def save_to_gift(isbn):
-    pass
+    return 'save_to_gift'
 
 
 @web.route('/gifts/<gid>/redraw')

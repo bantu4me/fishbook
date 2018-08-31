@@ -3,6 +3,9 @@ DEBUG = False
 HOST = '0.0.0.0'
 PORT = 5000
 
+# 设置secret key
+SECRET_KEY = '\x13\x7f\x02\xf6\xcb:\x95\xd9\xb8\xdb:\x8ba\xa5\x07\xdd\x8e\xb6\xcb\x8e\xe3I\x97\x1c'
+
 # db
 SQLALCHEMY_DATABASE_URI = 'mysql+cymysql://root:root@localhost:3306/fishbook'
 

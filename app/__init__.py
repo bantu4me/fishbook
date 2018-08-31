@@ -1,5 +1,11 @@
+import os
+
 from flask import Flask
 from app.model import db
+from flask_login import LoginManager
+
+login = LoginManager()
+
 
 def create_app():
     """
@@ -13,6 +19,10 @@ def create_app():
     # 初始化dao
     db.init_app(app)
     db.create_all(app=app)
+    # 初始化flask_login插件
+    login.init_app(app)
+    login.login_message = '请先注册或登录'
+    login.login_view = 'web.login'
 
     return app
 
@@ -20,3 +30,4 @@ def create_app():
 def register_blueprint(app: Flask):
     from app.web.blueprint import web
     app.register_blueprint(web)
+

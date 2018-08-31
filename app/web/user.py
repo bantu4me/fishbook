@@ -1,14 +1,20 @@
+from flask import render_template, request
+
+from app.form.user import UserRegisterForm
 from .blueprint import web
 
 
-@web.route('/login')
+@web.route('/login', methods=['GET', 'POST'])
 def login():
-    return 'user login'
+    return render_template('auth/login.html', form=[])
 
 
 @web.route('/register', methods=['GET', 'POST'])
 def register():
-    pass
+    form = UserRegisterForm(request.form)
+    if request.method == 'POST' and form.validate():
+        pass
+    return render_template('auth/register.html', form=form)
 
 
 @web.route('/reset/password', methods=['GET', 'POST'])

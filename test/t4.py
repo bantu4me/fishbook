@@ -1,3 +1,4 @@
+import os
 import time
 from threading import Thread
 
@@ -19,3 +20,5 @@ time.sleep(1)
 print('top in main:', s.top)
 
 
+if __name__ == '__main__':
+    print(os.urandom(24))
