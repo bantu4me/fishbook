@@ -15,3 +15,8 @@ class Base(db.Model):
     # 通用删除标记
     def delete(self):
         self.status = 0
+
+    def set_attr(self, args_dic: dict):
+        for k, v in args_dic.items():
+            if k != 'id' and hasattr(self, k):
+                setattr(self, k, v)

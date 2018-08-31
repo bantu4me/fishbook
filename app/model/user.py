@@ -12,7 +12,7 @@ class User(Base):
     phone_number = Column(String(length=18), unique=True)
     email = Column(String(length=50), unique=True)
     confirmed = Column(Boolean, default=False)
-    beans = Column(Float, default=0)
+    beans = Column(Float, default=2)
     send_counter = Column(Integer, default=0)
     receive_counter = Column(Integer, default=0)
     wx_open_id = Column(String(length=50))

@@ -1,6 +1,8 @@
 from flask import render_template, request
 
+from app import db
 from app.form.user import UserRegisterForm
+from app.model.user import User
 from .blueprint import web
 
 
@@ -13,7 +15,10 @@ def login():
 def register():
     form = UserRegisterForm(request.form)
     if request.method == 'POST' and form.validate():
-        pass
+        user = User()
+        user.set_attr(form.data)
+        with db.auto_commit():
+            db.session.add(user)
     return render_template('auth/register.html', form=form)
 
 
