@@ -7,5 +7,7 @@ PORT = 5000
 SQLALCHEMY_DATABASE_URI = 'mysql+cymysql://root:root@localhost:3306/fishbook'
 
 # 书籍请求地址
-isbn_url = 'http://t.yushu.im/v2/book/isbn/{}'
-keyword_url = 'http://t.yushu.im/v2/book/search?q={}&start={}&count={}'
+ISBN_URL = 'http://t.yushu.im/v2/book/isbn/{}'
+KEYWORD_URL = 'http://t.yushu.im/v2/book/search?q={}&start={}&count={}'
+# 分页数量
+PER_PAGE = 15
