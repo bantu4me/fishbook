@@ -1,10 +1,12 @@
+from flask_login import UserMixin
 from sqlalchemy import Column, String, Integer, Boolean, Float
 
+from app import login
 from app.model.base import Base
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
-class User(Base):
+class User(Base, UserMixin):
     __tablename__ = 'user'
 
     id = Column(Integer, primary_key=True)
@@ -26,3 +28,12 @@ class User(Base):
     @password.setter
     def password(self, pwd):
         self._password = generate_password_hash(pwd)
+
+    def check_pwd(self, raw):
+        return check_password_hash(self._password, raw)
+
+
+@login.user_loader
+def get_user(uid):
+    print('in get user')
+    return User.query.get(int(uid))

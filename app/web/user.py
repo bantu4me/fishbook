@@ -1,13 +1,22 @@
-from flask import render_template, request
+from flask import render_template, request, redirect, url_for, flash
+from flask_login import login_user
 
 from app import db
-from app.form.user import UserRegisterForm
+from app.form.user import UserRegisterForm, UserLoginForm
 from app.model.user import User
 from .blueprint import web
 
 
 @web.route('/login', methods=['GET', 'POST'])
 def login():
+    form = UserLoginForm(request.form)
+    if request.method == 'POST' and form.validate():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and user.check_pwd(form.password.data):
+            login_user(user)
+            return redirect(url_for('web.index'))
+        else:
+            flash(message='用户名或密码错误')
     return render_template('auth/login.html', form=[])
 
 
@@ -19,6 +28,7 @@ def register():
         user.set_attr(form.data)
         with db.auto_commit():
             db.session.add(user)
+        return redirect(url_for('web.login'))
     return render_template('auth/register.html', form=form)
 
 

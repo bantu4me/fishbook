@@ -1,10 +1,9 @@
-import os
-
 from flask import Flask
-from app.model import db
-from flask_login import LoginManager
 
+from flask_login import LoginManager
 login = LoginManager()
+
+from app.model import db
 
 
 def create_app():
@@ -30,4 +29,3 @@ def create_app():
 def register_blueprint(app: Flask):
     from app.web.blueprint import web
     app.register_blueprint(web)
-
