@@ -4,7 +4,6 @@ from app.model.base import Base
 
 
 class Book(Base):
-
     __tablename__ = 'book'
 
     id = Column(Integer, primary_key=True)
@@ -18,3 +17,7 @@ class Book(Base):
     summary = Column(String(length=1000))
     image = Column(String(length=100))
     title = Column(String(length=30))
+
+    # 模型转dict
+    def book_model_to_dict(self):
+        return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}

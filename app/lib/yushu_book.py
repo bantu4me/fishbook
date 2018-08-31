@@ -1,4 +1,6 @@
 from flask import current_app
+
+from app.model.book import Book
 from .httpclient import HttpClient
 
 
@@ -32,10 +34,23 @@ class YushuBook:
         self.__fill_page(result)
 
     def search_by_isbn(self, isbn):
-        url = self.isbn_url.format(isbn)
-        result = HttpClient.get(url)
-        self.keyword = isbn
-        self.__fill_single(result)
+        book = Book.query.filter_by(isbn=isbn).first()
+        if book:
+            book = book.book_model_to_dict()
+        else:
+            url = self.isbn_url.format(isbn)
+            book = HttpClient.get(url)
+            # 入库
+            self.save_singleBook_to_db(book)
+        self.__fill_single(book)
+
+    def save_singleBook_to_db(self, bookDataDic):
+        from app import db
+        with db.auto_commit():
+            book = Book()
+            book.set_attr(bookDataDic)
+            db.session.add(book)
+
 
     @property
     def only(self):
