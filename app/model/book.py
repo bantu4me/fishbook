@@ -25,5 +25,7 @@ class Book(Base):
         # 如：a,b,c > [a,b,c]
         if ',' in book_dict['author']:
             book_dict['author'] = book_dict['author'].split(',')
+        else:
+            book_dict['author'] = [book_dict['author']]
         return book_dict
 
