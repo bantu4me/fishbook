@@ -20,4 +20,10 @@ class Book(Base):
 
     # 模型转dict
     def book_model_to_dict(self):
-        return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
+        book_dict = {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
+        # 作者如果是多个的话，会被转成字符串，应转为列表结构
+        # 如：a,b,c > [a,b,c]
+        if ',' in book_dict['author']:
+            book_dict['author'] = book_dict['author'].split(',')
+        return book_dict
+

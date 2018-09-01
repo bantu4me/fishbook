@@ -51,7 +51,6 @@ class YushuBook:
             book.set_attr(bookDataDic)
             db.session.add(book)
 
-
     @property
     def only(self):
         return self.books[0]
