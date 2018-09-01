@@ -22,6 +22,7 @@ def save_to_gift(isbn):
             gift.uid = current_user.id
             gift.isbn = isbn
             db.session.add(gift)
+            flash('添加到礼物清单成功')
     else:
         flash('本书籍isbn号无效，或者已经添加到您的心愿/礼物清单')
     return redirect(url_for('web.book_detail', isbn=isbn))

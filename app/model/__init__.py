@@ -22,6 +22,3 @@ class MySQLAlchemy(SQLAlchemy):
 
 
 db = MySQLAlchemy(query_class=MyQuery)
-
-from . import user
-from . import book
