@@ -14,7 +14,7 @@ def login():
         user = User.query.filter_by(email=form.email.data).first()
         if user and user.check_pwd(form.password.data):
             login_user(user)
-            next = request.args['next']
+            next = request.args.get('next')
             if not next or not next.startswith('/'):
                 next = url_for('web.index')
             return redirect(next)
