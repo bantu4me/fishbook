@@ -20,3 +20,7 @@ class Base(db.Model):
         for k, v in args_dic.items():
             if k != 'id' and hasattr(self, k):
                 setattr(self, k, v)
+
+    @property
+    def create_datetime(self):
+        return datetime.fromtimestamp(self.create_time)
