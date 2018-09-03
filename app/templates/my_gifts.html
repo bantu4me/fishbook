@@ -12,20 +12,20 @@
     </div>
     {% for gift in gifts %}
         <div class="row">
-            <a href="{{ url_for('web.book_detail', isbn=gift.book.isbn) }}" class="">
+            <a href="{{ url_for('web.book_detail', isbn=gift.isbn) }}" class="">
                 <div style="margin-bottom:30px;" class="col-md-9 col-padding">
                     <div class="col-md-2">
-                        <img class="book-img-small shadow" src="{{ gift.book.image }}">
+                        <img class="book-img-small shadow" src="{{ gift.image }}">
                     </div>
                     <div style="margin-top:6px;" class="col-md-6 flex-vertical">
                             <span id="title"
-                                  class="book-middle-title">{{ gift.book.title }}</span>
+                                  class="book-middle-title">{{ gift.title }}</span>
                         <div style="margin-top:6px;"
                              class="flex-vertical description-font">
-                            <span id="author">{{ gift.book.author }}</span>
-                            <span id="publisher">{{ gift.book.publisher }}</span>
-                            <span id="price">{{ gift.book.price }}</span>
-                            <span id="isbn">{{ gift.book.isbn }}</span>
+                            <span id="author">{{ gift.author }}</span>
+                            <span id="publisher">{{ gift.publisher }}</span>
+                            <span id="price">{{ gift.price }}</span>
+                            <span id="isbn">{{ gift.isbn }}</span>
                         </div>
                         <a class="link-normal"
                            href="{{ url_for('web.redraw_from_gifts', gid=gift.id) }}">
@@ -34,7 +34,7 @@
                     </div>
                     <div class="col-md-3 flex-vertical">
                         {% if gift.wishes_count %}
-                            <a href="{{ url_for('web.book_detail', isbn=gift.book.isbn) }}">
+                            <a href="{{ url_for('web.book_detail', isbn=gift.isbn) }}">
                                 <span class="bg-info">{{ gift.wishes_count }}人想要</span>
 
                             </a>

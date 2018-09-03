@@ -15,11 +15,18 @@ class Gift(Base):
 
     @staticmethod
     def get_recent():
-        recent_gifts = Gift.query.filter_by(launched=False).group_by(Gift.isbn).order_by(desc(Gift.create_time)).limit(30).all()
+        recent_gifts = Gift.query.filter_by(launched=False).group_by(Gift.isbn).order_by(desc(Gift.create_time)).limit(
+            30).all()
         return recent_gifts
 
     def get_book_dict(self):
         return self.book.book_model_to_dict()
+
+    @staticmethod
+    def my_gift(uid):
+        gifts = Gift.query.filter_by(launched=False, uid=uid).all()
+        return gifts
+
 
 from app.model.book import Book
 from app.model.user import User

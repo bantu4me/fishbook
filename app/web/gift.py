@@ -3,13 +3,19 @@ from flask_login import login_required, current_user
 
 from app import db
 from app.model.gift import Gift
+from app.model.wish import Wish
+from app.viewmodel.trade import MyTradesView
 from app.web.blueprint import web
 
 
 @web.route('/my/gifts')
 @login_required
 def my_gifts():
-    pass
+    gifts = Gift.my_gift(current_user.id)
+    isbn_list = [isbn.book.isbn for isbn in gifts]
+    isbn_count_list = Wish.get_wish_cout_by_isbnlist(isbn_list)
+    giftsView = MyTradesView(gifts, isbn_count_list)
+    return render_template('my_gifts.html', gifts=giftsView.trades)
 
 
 @web.route('/gifts/book/<isbn>')
