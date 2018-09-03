@@ -1,5 +1,5 @@
 from flask import render_template, request, redirect, url_for, flash
-from flask_login import login_user
+from flask_login import login_user, current_user, logout_user
 
 from app import db
 from app.form.user import UserRegisterForm, UserLoginForm
@@ -52,4 +52,8 @@ def change_password():
 
 @web.route('/logout')
 def logout():
-    pass
+    if current_user and current_user.is_authenticated:
+        logout_user()
+    else:
+        flash('您还没有登录账户')
+    return redirect(url_for('web.index'))
