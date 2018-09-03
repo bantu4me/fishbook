@@ -13,9 +13,11 @@ from app.web.blueprint import web
 def my_gifts():
     gifts = Gift.my_gift(current_user.id)
     isbn_list = [isbn.book.isbn for isbn in gifts]
-    isbn_count_list = Wish.get_wish_cout_by_isbnlist(isbn_list)
-    giftsView = MyTradesView(gifts, isbn_count_list)
-    return render_template('my_gifts.html', gifts=giftsView.trades)
+    trades = []
+    if len(isbn_list)>0:
+        isbn_count_list = Wish.get_wish_cout_by_isbnlist(isbn_list)
+        trades = MyTradesView(gifts, isbn_count_list).trades
+    return render_template('my_gifts.html', gifts=trades)
 
 
 @web.route('/gifts/book/<isbn>')
