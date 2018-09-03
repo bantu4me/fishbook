@@ -37,5 +37,14 @@ def save_to_gift(isbn):
 
 
 @web.route('/gifts/<gid>/redraw')
+@login_required
 def redraw_from_gifts(gid):
-    pass
+    gift = Gift.query.get(gid)
+    if gift:
+        with db.auto_commit():
+            gift.delete()
+            flash_msg = '撤销书籍《' + gift.book.title + '》成功'
+            flash(flash_msg)
+    else:
+        flash('书籍不存在')
+    return redirect(url_for('web.my_gifts'))

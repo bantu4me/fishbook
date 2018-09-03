@@ -14,7 +14,7 @@ def my_wish():
     wishes = Wish.my_wish(current_user.id)
     isbn_list = [isbn.book.isbn for isbn in wishes]
     trades = []
-    if len(isbn_list)>0:
+    if len(isbn_list) > 0:
         isbn_count_list = Gift.get_gift_cout_by_isbnlist(isbn_list)
         trades = MyTradesView(wishes, isbn_count_list).trades
     return render_template('my_wish.html', wishes=trades)
@@ -41,5 +41,14 @@ def satisfy_wish(wid):
 
 
 @web.route('/wish/book/<isbn>/redraw')
+@login_required
 def redraw_from_wish(isbn):
-    pass
+    wish = Wish.query.filter_by(uid=current_user.id, isbn=isbn, launched=False).first()
+    if wish:
+        with db.auto_commit():
+            wish.delete()
+            flash_msg = '撤销书籍《'+wish.book.title+'》成功'
+            flash(flash_msg)
+    else:
+        flash('书籍不存在')
+    return redirect(url_for('web.my_wish'))
