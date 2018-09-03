@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, Boolean, ForeignKey, String, desc
 from sqlalchemy.orm import relationship
 
+from app import db
 from app.model.base import Base
 
 
@@ -26,6 +27,16 @@ class Gift(Base):
     def my_gift(uid):
         gifts = Gift.query.filter_by(launched=False, uid=uid).all()
         return gifts
+
+    @staticmethod
+    def get_gift_cout_by_isbnlist(isbn_list):
+        sql_start = 'SELECT isbn,COUNT(isbn) from gift WHERE status=1 AND launched=FALSE and isbn in ('
+        sql_end = ') GROUP BY isbn'
+        isbn_list_str = ','.join(isbn_list)
+        sql = sql_start + isbn_list_str + sql_end
+        print(sql)
+        isbn_count = db.session.execute(sql).fetchall()
+        return isbn_count
 
 
 from app.model.book import Book

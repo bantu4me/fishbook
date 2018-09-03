@@ -23,3 +23,8 @@ class Wish(Base):
         print(sql)
         isbn_count = db.session.execute(sql).fetchall()
         return isbn_count
+
+    @staticmethod
+    def my_wish(uid):
+        wishes = Wish.query.filter_by(launched=False, uid=uid).all()
+        return wishes
