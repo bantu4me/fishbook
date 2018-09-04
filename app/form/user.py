@@ -24,3 +24,8 @@ class UserRegisterForm(Form):
 
 class ForgetPwdForm(Form):
     email = StringField(validators=[DataRequired('请输入你的注册邮箱'), Email('邮箱格式不符合规范')])
+
+
+class ForgetPwsRequestForm(Form):
+    password1 = StringField(validators=[DataRequired('请输入密码'), Length(6, 30, '密码长度不符合规范')])
+    password2 = StringField(validators=[DataRequired('请确认密码'), EqualTo('password1', '两次输入的密码不一致')])

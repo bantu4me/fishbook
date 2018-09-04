@@ -1,11 +1,12 @@
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash, current_app
 from flask_login import login_user, current_user, logout_user
 
 from app import db
-from app.form.user import UserRegisterForm, UserLoginForm, ForgetPwdForm
+from app.form.user import UserRegisterForm, UserLoginForm, ForgetPwdForm, ForgetPwsRequestForm
 from app.lib.utils import send_mail
 from app.model.user import User
 from .blueprint import web
+from itsdangerous import JSONWebSignatureSerializer
 
 
 @web.route('/login', methods=['GET', 'POST'])
@@ -21,7 +22,7 @@ def login():
             return redirect(next)
         else:
             flash(message='用户名或密码错误')
-    return render_template('auth/login.html', form=[])
+    return render_template('auth/login.html', form=form)
 
 
 @web.route('/register', methods=['GET', 'POST'])
@@ -51,7 +52,17 @@ def forget_password_request():
 
 @web.route('/reset/password/<token>', methods=['GET', 'POST'])
 def forget_password(token):
-    print(token)
+    form = ForgetPwsRequestForm(request.form)
+    if request.method == 'POST' and form.validate():
+        s = JSONWebSignatureSerializer(secret_key=current_app.config['SECRET_KEY'])
+        info = s.loads(token)
+        if info and info.get('id') and info.get('email'):
+            user = User.query.filter_by(id=info.get('id'), email=info.get('email')).first()
+            if user:
+                with db.auto_commit():
+                    user.password = form.password1.data
+                    flash('更新密码成功，请使用新密码登录')
+                return redirect(url_for('web.login'))
     return render_template('auth/forget_password.html')
 
 
