@@ -14,7 +14,7 @@ class Book(Base):
     pages = Column(Integer)
     pubdate = Column(String(length=20))
     isbn = Column(String(length=15), nullable=False, unique=True)
-    summary = Column(String(length=1000))
+    summary = Column(String(length=5000))
     image = Column(String(length=100))
     title = Column(String(length=30))
 

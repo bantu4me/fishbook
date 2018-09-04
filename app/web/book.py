@@ -44,9 +44,10 @@ def book_detail(isbn):
         gift = Gift.query.filter_by(isbn=isbn, launched=False, uid=current_user.id).first()
 
         if wish or (not wish and not gift):
-            has_in_wishes = True
             gifts = Gift.query.filter_by(isbn=isbn, launched=False).all()
             giftsView = TradesView(gifts)
+            if wish:
+                has_in_wishes = True
 
         if gift:
             has_in_gifts = True
