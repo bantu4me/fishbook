@@ -41,12 +41,13 @@ def book_detail(isbn):
     # 当前用户已经登录
     if current_user and current_user.is_authenticated:
         wish = Wish.query.filter_by(isbn=isbn, launched=False, uid=current_user.id).first()
-        if wish:
+        gift = Gift.query.filter_by(isbn=isbn, launched=False, uid=current_user.id).first()
+
+        if wish or (not wish and not gift):
             has_in_wishes = True
             gifts = Gift.query.filter_by(isbn=isbn, launched=False).all()
             giftsView = TradesView(gifts)
 
-        gift = Gift.query.filter_by(isbn=isbn, launched=False, uid=current_user.id).first()
         if gift:
             has_in_gifts = True
             wishes = Wish.query.filter_by(isbn=isbn, launched=False).all()
