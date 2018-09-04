@@ -19,7 +19,10 @@ class Base(db.Model):
     def set_attr(self, args_dic: dict):
         for k, v in args_dic.items():
             if k != 'id' and hasattr(self, k):
+                if k == 'summary':
+                    v = v[:4990]+'...'
                 setattr(self, k, v)
+
 
     @property
     def create_datetime(self):

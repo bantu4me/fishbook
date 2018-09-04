@@ -8,3 +8,6 @@ print(l)
 
 # l = [book_dict['author']]
 # book_dict['author'] = l
+
+s = '12345678910'
+print(s[:4])
