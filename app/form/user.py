@@ -20,3 +20,12 @@ class UserRegisterForm(Form):
         if user:
             # raise ValidationError(message='该邮箱已被注册')
             raise StopValidation(message='该邮箱已被注册')
+
+
+class ForgetPwdForm(Form):
+    email = StringField(validators=[DataRequired('请输入你的注册邮箱'), Email('邮箱格式不符合规范')])
+
+    def validate_email(self, field):
+        user = User.query.filter_by(email=field.data).first()
+        if not user:
+            raise StopValidation(message='账号不存在')

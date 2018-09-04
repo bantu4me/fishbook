@@ -2,7 +2,8 @@ from flask import Flask
 
 from flask_login import LoginManager
 login = LoginManager()
-
+from flask_mail import Mail
+mail = Mail()
 from app.model import db
 
 
@@ -22,7 +23,8 @@ def create_app():
     login.init_app(app)
     login.login_message = '请先注册或登录'
     login.login_view = 'web.login'
-
+    # 初始化mail
+    mail.init_app(app)
     return app
 
 

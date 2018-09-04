@@ -2,7 +2,7 @@ from flask import render_template, request, redirect, url_for, flash
 from flask_login import login_user, current_user, logout_user
 
 from app import db
-from app.form.user import UserRegisterForm, UserLoginForm
+from app.form.user import UserRegisterForm, UserLoginForm, ForgetPwdForm
 from app.model.user import User
 from .blueprint import web
 
@@ -37,7 +37,10 @@ def register():
 
 @web.route('/reset/password', methods=['GET', 'POST'])
 def forget_password_request():
-    pass
+    form = ForgetPwdForm(request.form)
+    if request.method == 'POST' and form.validate():
+        pass
+    return render_template('auth/forget_password_request.html',form=form)
 
 
 @web.route('/reset/password/<token>', methods=['GET', 'POST'])
