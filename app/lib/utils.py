@@ -1,3 +1,9 @@
+from threading import Thread
+
+from flask import current_app
+from flask_mail import Message
+
+
 def is_isbn_or_key(word: str):
     """
     判断请求类型isbn或者分页查询
@@ -14,3 +20,11 @@ def is_isbn_or_key(word: str):
         if len(shor_word) == 10 and shor_word.isdigit():
             isbn_or_key = 'isbn'
     return isbn_or_key
+
+
+from app import mail
+
+
+def send_mail(to, html):
+    msg = Message(subject='[鱼书 by lijie]重置密码', recipients=[to], sender=current_app.config['MAIL_USERNAME'], html=html)
+    mail.send(message=msg)

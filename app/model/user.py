@@ -1,3 +1,4 @@
+from flask import current_app
 from flask_login import UserMixin
 from sqlalchemy import Column, String, Integer, Boolean, Float
 
@@ -6,8 +7,7 @@ from app.lib.utils import is_isbn_or_key
 from app.lib.yushu_book import YushuBook
 from app.model.base import Base
 from werkzeug.security import generate_password_hash, check_password_hash
-
-
+from itsdangerous import JSONWebSignatureSerializer
 
 
 class User(Base, UserMixin):
@@ -36,7 +36,7 @@ class User(Base, UserMixin):
     def check_pwd(self, raw):
         return check_password_hash(self._password, raw)
 
-    def can_save_gift_or_wish(self, isbn)-> bool:
+    def can_save_gift_or_wish(self, isbn) -> bool:
         '''
         通过传入isbn判断当前isbn对应书籍能否保存到心愿或礼物
         :param isbn:
@@ -54,6 +54,11 @@ class User(Base, UserMixin):
         gift = Gift.query.filter_by(uid=self.id, isbn=isbn, launched=False).first()
         wish = Wish.query.filter_by(uid=self.id, isbn=isbn, launched=False).first()
         return True if not gift and not wish else False
+
+    def generate_token(self):
+        info = {'id': self.id, 'email': self.email}
+        s = JSONWebSignatureSerializer(secret_key=current_app.config['SECRET_KEY'])
+        return s.dumps(info).decode('utf-8')
 
 
 @login.user_loader

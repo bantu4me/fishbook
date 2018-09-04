@@ -12,9 +12,10 @@ MAIL_PASSWORD = 'dmzwwiqhbuuybfde'
 '''
 app.config['MAIL_SERVER'] = 'smtp.qq.com'
 app.config['MAIL_PORT'] = 465
-app.config['MAIL_USE_SS'] = True
+app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USE_TSL'] = False
 app.config['MAIL_PASSWORD'] = 'dmzwwiqhbuuybfde'
+app.config['MAIL_USERNAME'] = 'lijie9306f@qq.com'
 
 mail = Mail(app)
 

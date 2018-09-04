@@ -3,6 +3,7 @@ from flask_login import login_user, current_user, logout_user
 
 from app import db
 from app.form.user import UserRegisterForm, UserLoginForm, ForgetPwdForm
+from app.lib.utils import send_mail
 from app.model.user import User
 from .blueprint import web
 
@@ -39,13 +40,19 @@ def register():
 def forget_password_request():
     form = ForgetPwdForm(request.form)
     if request.method == 'POST' and form.validate():
-        pass
-    return render_template('auth/forget_password_request.html',form=form)
+        user = User.query.filter_by(email=form.email.data).first()
+        if user:
+            html = render_template('email/reset_password.html', user=user, token=user.generate_token())
+            send_mail(form.email.data, html)
+        else:
+            flash('账号不存在')
+    return render_template('auth/forget_password_request.html', form=form)
 
 
 @web.route('/reset/password/<token>', methods=['GET', 'POST'])
 def forget_password(token):
-    pass
+    print(token)
+    return render_template('auth/forget_password.html')
 
 
 @web.route('/change/password', methods=['GET', 'POST'])
