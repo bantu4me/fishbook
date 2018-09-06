@@ -25,6 +25,6 @@ def is_isbn_or_key(word: str):
 from app import mail
 
 
-def send_mail(to, html):
-    msg = Message(subject='[鱼书 by lijie]重置密码', recipients=[to], sender=current_app.config['MAIL_USERNAME'], html=html)
+def send_mail(to, html, subject='[鱼书 by lijie]重置密码'):
+    msg = Message(subject=subject, recipients=[to], sender=current_app.config['MAIL_USERNAME'], html=html)
     mail.send(message=msg)
