@@ -47,7 +47,7 @@ class Drift(Base):
         self.book_author = gift.book.author
         self.book_img = gift.book.image
         self.requester_id = user.id
-        self.recipient_name = user.nickname
+        self.requester_nickname = user.nickname
         self.gift_id = gift.id
         self.gifter_id = gift.user.id
         self.gifter_nickname = gift.user.nickname
