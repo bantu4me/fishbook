@@ -4,9 +4,11 @@ from sqlalchemy import or_, desc
 
 from app import db
 from app.form.drift import DriftForm
+from app.lib.enums import PendingStatus
 from app.lib.utils import send_mail
 from app.model.drift import Drift
 from app.model.gift import Gift
+from app.model.wish import Wish
 from app.viewmodel.drift import DriftsViewModel
 from app.web.blueprint import web
 
@@ -51,14 +53,32 @@ def send_drift(gid):
 
 @web.route('/drift/<int:did>/reject')
 def reject_drift(did):
-    pass
+    with db.auto_commit():
+        drift = Drift.query.filter_by(gifter_id=current_user.id, id=did).first_or_404()
+        drift.pending = PendingStatus.reject
+        current_user.beans -= 1
+    return redirect(url_for('web.pending'))
 
 
 @web.route('/drift/<int:did>/redraw')
 def redraw_drift(did):
-    pass
+    drift = Drift.query.filter_by(id=did, requester_id=current_user.id).first()
+    if drift:
+        with db.auto_commit():
+            drift.pending = PendingStatus.redraw
+            current_user.beans += 1
+    return redirect(url_for('web.pending'))
 
 
 @web.route('/drift/<int:did>/mailed')
 def mailed_drift(did):
-    pass
+    drift = Drift.query.filter_by(id=did, gifter_id=current_user.id).first()
+    if drift:
+        with db.auto_commit():
+            drift.pending = PendingStatus.success
+            current_user.beans += 1
+            gift = Gift.query.filter_by(id=drift.gift_id, launched=False).first_or_404()
+            gift.launched = True
+            wish = Wish.query.filter_by(isbn=drift.isbn, uid=drift.requester_id, launched=False).first_or_404()
+            wish.launched = True
+    return redirect(url_for('web.pending'))
