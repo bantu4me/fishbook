@@ -1,17 +1,24 @@
 from flask import render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
+from sqlalchemy import or_, desc
 
 from app import db
 from app.form.drift import DriftForm
 from app.lib.utils import send_mail
 from app.model.drift import Drift
 from app.model.gift import Gift
+from app.viewmodel.drift import DriftsViewModel
 from app.web.blueprint import web
 
 
 @web.route('/pending')
+@login_required
 def pending():
-    return render_template('pending.html')
+    drifts = Drift.query.filter(
+        or_(Drift.requester_id == current_user.id, Drift.gifter_id == current_user.id)).order_by(
+        desc(Drift.create_time)).all()
+    driftsViewModel = DriftsViewModel(drifts=drifts, uid=current_user.id)
+    return render_template('pending.html', drifts=driftsViewModel.drifts)
 
 
 @web.route('/drift/<int:gid>', methods=['GET', 'POST'])
@@ -37,7 +44,7 @@ def send_drift(gid):
             db.session.add(drift)
             html = render_template('email/get_gift.html', gift=gift, wishername=current_user.nickname)
             send_mail(gift.user.email, html)
-            flash('您发送一封邮件给'+gift.user.nickname+',请等待对方回复')
+            flash('您发送一封邮件给' + gift.user.nickname + ',请等待对方回复')
             return redirect(url_for('web.pending'))
     return render_template('drift.html', gifter=gift.user.summary, form=form, user_beans=current_user.beans)
 

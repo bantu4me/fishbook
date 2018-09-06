@@ -51,7 +51,7 @@ class Drift(Base):
         self.gift_id = gift.id
         self.gifter_id = gift.user.id
         self.gifter_nickname = gift.user.nickname
-        self.pending = PendingStatus(1)
+        self.pending = PendingStatus.wait
 
 
 
