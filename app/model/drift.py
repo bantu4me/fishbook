@@ -1,7 +1,10 @@
 from sqlalchemy import Column, Integer, String, SmallInteger
 
+from app.form.drift import DriftForm
 from app.lib.enums import PendingStatus
 from app.model.base import Base
+from app.model.gift import Gift
+from app.model.user import User
 
 
 class Drift(Base):
@@ -33,3 +36,23 @@ class Drift(Base):
     @pending.setter
     def pending(self, status):
         self._pending = status.value
+
+    def generate_drift(self, form:DriftForm, gift:Gift, user:User):
+        self.recipient_name = form.recipient_name.data
+        self.address = form.address.data
+        self.message = form.message.data
+        self.mobile = form.mobile.data
+        self.isbn = gift.isbn
+        self.book_title = gift.book.title
+        self.book_author = gift.book.author
+        self.book_img = gift.book.image
+        self.requester_id = user.id
+        self.recipient_name = user.nickname
+        self.gift_id = gift.id
+        self.gifter_id = gift.user.id
+        self.gifter_nickname = gift.user.nickname
+        self.pending = PendingStatus(1)
+
+
+
+

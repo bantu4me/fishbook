@@ -1,7 +1,10 @@
-from flask import render_template, request, flash
+from flask import render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
 
+from app import db
 from app.form.drift import DriftForm
+from app.lib.utils import send_mail
+from app.model.drift import Drift
 from app.model.gift import Gift
 from app.web.blueprint import web
 
@@ -25,7 +28,17 @@ def send_drift(gid):
     if not can_send_drift:
         return render_template('not_enough_beans.html', beans=current_user.beans)
     if request.method == 'POST' and form.validate():
-        pass
+        drift = Drift()
+        drift.generate_drift(form, gift, current_user)
+        with db.auto_commit():
+            # 当前用户鱼豆-1 同时赠送者鱼豆+1
+            current_user.beans -= 1
+            gift.user.beans += 1
+            db.session.add(drift)
+            html = render_template('email/get_gift.html', gift=gift, wishername=current_user.nickname)
+            send_mail(gift.user.email, html)
+            flash('您发送一封邮件给'+gift.user.nickname+',请等待对方回复')
+            return redirect(url_for('web.pending'))
     return render_template('drift.html', gifter=gift.user.summary, form=form, user_beans=current_user.beans)
 
 
