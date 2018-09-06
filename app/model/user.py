@@ -1,3 +1,5 @@
+import math
+
 from flask import current_app
 from flask_login import UserMixin
 from sqlalchemy import Column, String, Integer, Boolean, Float
@@ -24,6 +26,15 @@ class User(Base, UserMixin):
     wx_open_id = Column(String(length=50))
     wx_name = Column(String(length=32))
     _password = Column('password', String(256), nullable=False)
+
+    @property
+    def summary(self):
+        return dict(
+            nickname=self.nickname,
+            beans=self.beans,
+            email=self.email,
+            send_receive=str(self.send_counter) + '/' + str(self.receive_counter)
+        )
 
     @property
     def password(self):
@@ -60,10 +71,17 @@ class User(Base, UserMixin):
         s = JSONWebSignatureSerializer(secret_key=current_app.config['SECRET_KEY'])
         return s.dumps(info).decode('utf-8')
 
+    def can_send_drift(self):
+        if self.beans < 1:
+            return False
+        if self.receive_counter == 0:
+            return True if self.send_counter - self.receive_counter <= 2 else False
+        elif self.receive_counter != 0:
+            return True if math.ceil(self.send_counter / self.receive_counter) > 2 else False
+
 
 @login.user_loader
 def get_user(uid):
-    print('in get user')
     return User.query.get(int(uid))
 
 

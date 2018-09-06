@@ -22,3 +22,4 @@ class MySQLAlchemy(SQLAlchemy):
 
 
 db = MySQLAlchemy(query_class=MyQuery)
+
