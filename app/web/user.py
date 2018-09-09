@@ -6,7 +6,7 @@ from app.form.user import UserRegisterForm, UserLoginForm, ForgetPwdForm, Forget
 from app.lib.utils import send_mail
 from app.model.user import User
 from .blueprint import web
-from itsdangerous import JSONWebSignatureSerializer
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, SignatureExpired
 
 
 @web.route('/login', methods=['GET', 'POST'])
@@ -52,18 +52,25 @@ def forget_password_request():
 
 @web.route('/reset/password/<token>', methods=['GET', 'POST'])
 def forget_password(token):
-    form = ForgetPwsRequestForm(request.form)
-    if request.method == 'POST' and form.validate():
-        s = JSONWebSignatureSerializer(secret_key=current_app.config['SECRET_KEY'])
-        info = s.loads(token)
-        if info and info.get('id') and info.get('email'):
-            user = User.query.filter_by(id=info.get('id'), email=info.get('email')).first()
-            if user:
-                with db.auto_commit():
-                    user.password = form.password1.data
-                    flash('更新密码成功，请使用新密码登录')
-                return redirect(url_for('web.login'))
-    return render_template('auth/forget_password.html')
+    try:
+        s = Serializer(secret_key=current_app.config['SECRET_KEY'])
+        form = ForgetPwsRequestForm(request.form)
+        if request.method == 'POST' and form.validate():
+            info = s.loads(token)
+            if info and info.get('id') and info.get('email'):
+                user = User.query.filter_by(id=info.get('id'), email=info.get('email')).first()
+                if user:
+                    with db.auto_commit():
+                        user.password = form.password1.data
+                        flash('更新密码成功，请使用新密码登录')
+                    return redirect(url_for('web.login'))
+                else:
+                    flash('没有这个用户')
+                    return redirect(url_for('web.index'))
+    except SignatureExpired:
+        flash('token已经超时,请重新向服务器请求')
+    finally:
+        return render_template('auth/forget_password.html')
 
 
 @web.route('/change/password', methods=['GET', 'POST'])

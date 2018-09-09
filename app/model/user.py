@@ -9,7 +9,7 @@ from app.lib.utils import is_isbn_or_key
 from app.lib.yushu_book import YushuBook
 from app.model.base import Base
 from werkzeug.security import generate_password_hash, check_password_hash
-from itsdangerous import JSONWebSignatureSerializer
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 
 class User(Base, UserMixin):
@@ -68,7 +68,7 @@ class User(Base, UserMixin):
 
     def generate_token(self):
         info = {'id': self.id, 'email': self.email}
-        s = JSONWebSignatureSerializer(secret_key=current_app.config['SECRET_KEY'])
+        s = Serializer(secret_key=current_app.config['SECRET_KEY'], expires_in=6)
         return s.dumps(info).decode('utf-8')
 
     def can_send_drift(self):
