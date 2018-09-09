@@ -1,7 +1,9 @@
 from flask import render_template
+from flask_login import login_required, current_user
 
 from app.model.gift import Gift
 from app.viewmodel.book import BookView
+from app.viewmodel.user import PersonView
 from .blueprint import web
 
 
@@ -13,5 +15,7 @@ def index():
 
 
 @web.route('/personal')
+@login_required
 def personal_center():
-    pass
+    user = PersonView(current_user)
+    return render_template('personal.html', user=user)
