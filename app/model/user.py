@@ -68,7 +68,7 @@ class User(Base, UserMixin):
 
     def generate_token(self):
         info = {'id': self.id, 'email': self.email}
-        s = Serializer(secret_key=current_app.config['SECRET_KEY'], expires_in=6)
+        s = Serializer(secret_key=current_app.config['SECRET_KEY'], expires_in=60)
         return s.dumps(info).decode('utf-8')
 
     def can_send_drift(self):

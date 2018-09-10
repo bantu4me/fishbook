@@ -1,5 +1,5 @@
 from flask import render_template, request, redirect, url_for, flash, current_app
-from flask_login import login_user, current_user, logout_user
+from flask_login import login_user, current_user, logout_user, login_required
 
 from app import db
 from app.form.user import UserRegisterForm, UserLoginForm, ForgetPwdForm, ForgetPwsRequestForm
@@ -55,8 +55,8 @@ def forget_password(token):
     try:
         s = Serializer(secret_key=current_app.config['SECRET_KEY'])
         form = ForgetPwsRequestForm(request.form)
+        info = s.loads(token)
         if request.method == 'POST' and form.validate():
-            info = s.loads(token)
             if info and info.get('id') and info.get('email'):
                 user = User.query.filter_by(id=info.get('id'), email=info.get('email')).first()
                 if user:
@@ -69,13 +69,20 @@ def forget_password(token):
                     return redirect(url_for('web.index'))
     except SignatureExpired:
         flash('token已经超时,请重新向服务器请求')
-    finally:
-        return render_template('auth/forget_password.html')
+        return redirect(url_for('web.forget_password_request'))
+    return render_template('auth/forget_password.html', form=form)
 
 
 @web.route('/change/password', methods=['GET', 'POST'])
+@login_required
 def change_password():
-    pass
+    form = ForgetPwsRequestForm(request.form)
+    if request.method == 'POST' and form.validate():
+        user = User.query.get(current_user.id)
+        with db.auto_commit():
+            user.password = form.password1.data
+        return redirect(url_for('web.index'))
+    return render_template('auth/forget_password.html', form=form)
 
 
 @web.route('/logout')
